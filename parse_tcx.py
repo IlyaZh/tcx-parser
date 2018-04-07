@@ -1,14 +1,19 @@
 #! python3
 
-'''
-
-Parse tcx files
-
-'''
 
 
-import os, pandas as pd, logging, glob
+import os, pandas as pd, logging, glob, argparse
 from lxml import etree
+
+## Setup argparse
+
+import argparse
+
+parser = argparse.ArgumentParser(description='Convert a folder of .tcx files to a .csv. Easiest behavior is to copy this .py file into the directory of .tcx files and running without arguments.')
+parser.add_argument('--folder', '-f', help='Path to folder to scan for .tcx files. Default if omitted is current working directory. In Windows, use a double slash \\\\ instead of \\ and do not use a slash at the end. For example, C:\\\\input_folder\\\\subfolder', default=os.getcwd())
+parser.add_argument('--output', '-o', help='Name of .csv to write to. Follows same rules as above for specifying a full path. Default if omitted is output.csv',default='output.csv')
+
+args = parser.parse_args()
 
 
 def process_trackpoint(trackpoint,ns1,df):
@@ -61,5 +66,7 @@ def process_folder(folder_path=os.getcwd(), output_csv='polar_flow.csv'):
     for this_tcx in fl:
         temp = process_tcx_file(this_tcx)
         tcx_table = temp.append(tcx_table)
-    tcx_table.to_csv(output_csv,index=False)
-
+    tcx_table.to_csv(output_csv, index=False)
+print(args.folder)
+print(args.output)
+process_folder(folder_path=args.folder, output_csv=args.output)
